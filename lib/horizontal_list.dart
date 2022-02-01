@@ -2,7 +2,7 @@ library horizontal_list;
 
 import 'package:flutter/material.dart';
 
-class HorizontalScrollView extends StatefulWidget {
+class HorizontalListView extends StatefulWidget {
   ///List of widget to populate horizontal scroll.
   final List<Widget> list;
 
@@ -31,7 +31,7 @@ class HorizontalScrollView extends StatefulWidget {
   ///The size that scroll will go when click on button next or previous, the default is 300.
   final int scrollSize;
 
-  const HorizontalScrollView({
+  const HorizontalListView({
     required this.list,
     required this.iconPrevious,
     required this.iconNext,
@@ -44,10 +44,10 @@ class HorizontalScrollView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<HorizontalScrollView> createState() => _HorizontalScrollState();
+  State<HorizontalListView> createState() => _HorizontalScrollState();
 }
 
-class _HorizontalScrollState extends State<HorizontalScrollView> {
+class _HorizontalScrollState extends State<HorizontalListView> {
   final ScrollController _controller = ScrollController();
 
   var _reachEnd = false;
