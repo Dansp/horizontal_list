@@ -34,6 +34,8 @@ flutter packages get
 
 ```dart
 HorizontalListView(
+    width: double.maxFinite, //Width of widget
+    height: 200, //Height of widget
     list: [Text('Text 1'), Text('Text 2')], //List of widget
     iconNext: Icon(Icons.arrow_forward_ios), // Icon for button next
     iconPrevious: Icon(Icons.arrow_back_ios), // Icon for button previous
