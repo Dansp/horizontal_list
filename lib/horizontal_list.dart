@@ -3,7 +3,6 @@ library horizontal_list;
 import 'package:flutter/material.dart';
 
 class HorizontalListView extends StatefulWidget {
-
   ///Height of widget
   final double height;
 
@@ -122,7 +121,8 @@ class _HorizontalScrollState extends State<HorizontalListView> {
                         if (widget.onNextPressed != null) {
                           widget.onNextPressed!();
                         }
-                        _controller.animateTo(_controller.offset + widget.scrollSize,
+                        _controller.animateTo(
+                            _controller.offset + widget.scrollSize,
                             duration: widget.durationAnimation,
                             curve: widget.curveAnimation);
                       },
@@ -139,7 +139,8 @@ class _HorizontalScrollState extends State<HorizontalListView> {
                         if (widget.onPreviousPressed != null) {
                           widget.onPreviousPressed!();
                         }
-                        _controller.animateTo(_controller.offset - widget.scrollSize,
+                        _controller.animateTo(
+                            _controller.offset - widget.scrollSize,
                             duration: widget.durationAnimation,
                             curve: widget.curveAnimation);
                       }

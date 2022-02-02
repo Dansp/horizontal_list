@@ -1,6 +1,6 @@
 # horizontal_list
 
-A horizontal list widget with buttons next and previous. You can customize your card for example and insert it on HorizontalListView widget. You also can change animation and insert your onw icon for buttons next and previous.
+A horizontal list widget with buttons next and previous. You can customize your card for example and insert it on HorizontalListView widget.
 
 
 <div>

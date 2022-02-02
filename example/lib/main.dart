@@ -32,33 +32,31 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   List<Widget> _itemsComponent() {
     List<Widget> myList = [];
-    for(var i=0; i<10; i++) {
-      myList.add(
-          Card(
+    for (var i = 0; i < 10; i++) {
+      myList.add(Card(
           child: Container(
               width: 300,
-              color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-              child: Center(child: Text('Card ${i+1}',
-                  style: const TextStyle(fontWeight: FontWeight.bold))))));
+              color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
+                  .withOpacity(1.0),
+              child: Center(
+                  child: Text('Card ${i + 1}',
+                      style: const TextStyle(fontWeight: FontWeight.bold))))));
     }
     return myList;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-
-        title: Text(widget.title),
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 150),
-          HorizontalListView(
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: Column(
+          children: [
+            const SizedBox(height: 150),
+            HorizontalListView(
               width: double.maxFinite,
               height: 200,
               list: _itemsComponent(),
@@ -72,9 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 //DO WHAT YOU WANT ON NEXT PRESSED
                 log('onNextPressed');
               },
-          ),
-        ],
-      )
-    );
+            ),
+          ],
+        ));
   }
 }
