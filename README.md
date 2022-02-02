@@ -5,8 +5,11 @@ A horizontal list widget with buttons next and previous. You can customize your 
 
 <div>
   WEB/DESKTOP
+  <br>
   <img src="https://raw.githubusercontent.com/Dansp/horizontal_list/main/media/web.gif" height="400">
+  <br>
   APP
+  <br>
   <img src="https://raw.githubusercontent.com/Dansp/horizontal_list/main/media/mobile.gif" height="400">
 </div>
 
