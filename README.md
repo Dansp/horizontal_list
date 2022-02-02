@@ -1,6 +1,14 @@
 # horizontal_list
 
-A horizontal list widget to use in mainly for web or desktop application.
+A horizontal list widget with buttons next and previous. You can customize your card for example and insert it on HorizontalListView widget. You also can change animation and insert your onw icon for buttons next and previous.
+
+
+<div>
+  <img src="https://raw.githubusercontent.com/Dansp/horizontal_list/main/media/mobile.gif" height="400">
+  <img src="https://raw.githubusercontent.com/Dansp/horizontal_list/main/media/web.gif" height="400">
+</div>
+
+<br>
 
 ## Using the library
 

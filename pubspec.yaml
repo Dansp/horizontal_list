@@ -1,6 +1,6 @@
 name: horizontal_list
-description: A horizontal list with buttons next and previous
-version: 0.0.1
+description: A horizontal list widget with buttons next and previous. You can customize your card for example and insert it on HorizontalListView widget. You can also change animation and insert your onw icon for buttons next and previous.
+version: 0.0.2
 homepage: https://github.com/Dansp/horizontal_list.git
 
 environment:
