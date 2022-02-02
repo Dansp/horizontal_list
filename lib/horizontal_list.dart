@@ -3,6 +3,13 @@ library horizontal_list;
 import 'package:flutter/material.dart';
 
 class HorizontalListView extends StatefulWidget {
+
+  ///Height of widget
+  final double height;
+
+  ///Width of widget
+  final double width;
+
   ///List of widget to populate horizontal scroll.
   final List<Widget> list;
 
@@ -32,6 +39,8 @@ class HorizontalListView extends StatefulWidget {
   final int scrollSize;
 
   const HorizontalListView({
+    required this.height,
+    required this.width,
     required this.list,
     required this.iconPrevious,
     required this.iconNext,
@@ -82,58 +91,62 @@ class _HorizontalScrollState extends State<HorizontalListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      Positioned(
-        top: 0.0,
-        bottom: 0,
-        left: 50.0,
-        right: 50.0,
-        child: ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          controller: _controller,
-          itemBuilder: (context, index) {
-            return widget.list[index];
-          },
-          itemCount: widget.list.length,
+    return SizedBox(
+      width: widget.width,
+      height: widget.height,
+      child: Stack(children: [
+        Positioned(
+          top: 0.0,
+          bottom: 0,
+          left: 50.0,
+          right: 50.0,
+          child: ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            controller: _controller,
+            itemBuilder: (context, index) {
+              return widget.list[index];
+            },
+            itemCount: widget.list.length,
+          ),
         ),
-      ),
-      Visibility(
-        visible: !_reachEnd,
-        child: Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              icon: widget.iconNext,
-              onPressed: _reachEnd
-                  ? null
-                  : () {
-                      if (widget.onNextPressed != null) {
-                        widget.onNextPressed!();
+        Visibility(
+          visible: !_reachEnd,
+          child: Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                icon: widget.iconNext,
+                onPressed: _reachEnd
+                    ? null
+                    : () {
+                        if (widget.onNextPressed != null) {
+                          widget.onNextPressed!();
+                        }
+                        _controller.animateTo(_controller.offset + widget.scrollSize,
+                            duration: widget.durationAnimation,
+                            curve: widget.curveAnimation);
+                      },
+              )),
+        ),
+        Visibility(
+          visible: _startScroll,
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                icon: widget.iconPrevious,
+                onPressed: _startScroll
+                    ? () {
+                        if (widget.onPreviousPressed != null) {
+                          widget.onPreviousPressed!();
+                        }
+                        _controller.animateTo(_controller.offset - widget.scrollSize,
+                            duration: widget.durationAnimation,
+                            curve: widget.curveAnimation);
                       }
-                      _controller.animateTo(_controller.offset + widget.scrollSize,
-                          duration: widget.durationAnimation,
-                          curve: widget.curveAnimation);
-                    },
-            )),
-      ),
-      Visibility(
-        visible: _startScroll,
-        child: Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-              icon: widget.iconPrevious,
-              onPressed: _startScroll
-                  ? () {
-                      if (widget.onPreviousPressed != null) {
-                        widget.onPreviousPressed!();
-                      }
-                      _controller.animateTo(_controller.offset - widget.scrollSize,
-                          duration: widget.durationAnimation,
-                          curve: widget.curveAnimation);
-                    }
-                  : null,
-            )),
-      )
-    ]);
+                    : null,
+              )),
+        )
+      ]),
+    );
   }
 }
