@@ -1,5 +1,8 @@
 library horizontal_list;
 
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class HorizontalListView extends StatefulWidget {
@@ -13,10 +16,10 @@ class HorizontalListView extends StatefulWidget {
   final List<Widget> list;
 
   ///Icon to show in next button
-  final Icon iconPrevious;
+  final Icon? iconPrevious;
 
   ///Icon to show in next button
-  final Icon iconNext;
+  final Icon? iconNext;
 
   ///On click listener when next button was clicked.
   final VoidCallback? onNextPressed;
@@ -41,8 +44,8 @@ class HorizontalListView extends StatefulWidget {
     required this.height,
     required this.width,
     required this.list,
-    required this.iconPrevious,
-    required this.iconNext,
+    this.iconPrevious,
+    this.iconNext,
     this.onNextPressed,
     this.onPreviousPressed,
     this.durationAnimation = const Duration(milliseconds: 500),
@@ -58,27 +61,49 @@ class HorizontalListView extends StatefulWidget {
 class _HorizontalScrollState extends State<HorizontalListView> {
   final ScrollController _controller = ScrollController();
 
-  var _reachEnd = false;
+  var _reachEnd = true;
   var _startScroll = false;
 
   _listener() {
-    final maxScroll = _controller.position.maxScrollExtent;
-    final minScroll = _controller.position.minScrollExtent;
-    if (_controller.offset >= maxScroll) {
-      _reachEnd = true;
+    if (_controller.hasClients) {
+      final maxScroll = _controller.position.maxScrollExtent;
+      final minScroll = _controller.position.minScrollExtent;
+      setState(() {
+        log('minScroll $minScroll, maxScroll $maxScroll, offset ${_controller.offset}');
+        if (_controller.offset <= minScroll && maxScroll > 0) {
+          _reachEnd = false;
+        }
+        _reachEnd = _controller.offset >= maxScroll;
+        _startScroll = _controller.offset > minScroll;
+      });
     }
-    if (_controller.offset <= minScroll) {
-      _reachEnd = false;
-    }
-    setState(() {
-      _startScroll = _controller.offset > minScroll;
-    });
   }
 
   @override
   void initState() {
     _controller.addListener(_listener);
     super.initState();
+    if (!_controller.hasClients) {
+      _waitWhile(() => !_controller.hasClients).then((value) {
+        _listener();
+      });
+    }
+  }
+
+  ///Wait to wait a bool variable to change
+  Future _waitWhile(bool Function() test,
+      [Duration pollInterval = Duration.zero]) {
+    var completer = Completer();
+    check() {
+      if (!test()) {
+        completer.complete();
+      } else {
+        Timer(pollInterval, check);
+      }
+    }
+
+    check();
+    return completer.future;
   }
 
   @override
@@ -97,10 +122,10 @@ class _HorizontalScrollState extends State<HorizontalListView> {
         Positioned(
           top: 0.0,
           bottom: 0,
-          left: 50.0,
-          right: 50.0,
+          left: widget.iconPrevious != null ? 50.0 : 0,
+          right: widget.iconNext != null ? 50.0 : 0,
           child: ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
+            // physics: const NeverScrollableScrollPhysics(),
             scrollDirection: Axis.horizontal,
             controller: _controller,
             itemBuilder: (context, index) {
@@ -109,44 +134,63 @@ class _HorizontalScrollState extends State<HorizontalListView> {
             itemCount: widget.list.length,
           ),
         ),
-        Visibility(
-          visible: !_reachEnd,
-          child: Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                icon: widget.iconNext,
-                onPressed: _reachEnd
-                    ? null
-                    : () {
-                        if (widget.onNextPressed != null) {
-                          widget.onNextPressed!();
-                        }
-                        _controller.animateTo(
-                            _controller.offset + widget.scrollSize,
-                            duration: widget.durationAnimation,
-                            curve: widget.curveAnimation);
-                      },
-              )),
-        ),
-        Visibility(
-          visible: _startScroll,
-          child: Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                icon: widget.iconPrevious,
-                onPressed: _startScroll
-                    ? () {
-                        if (widget.onPreviousPressed != null) {
-                          widget.onPreviousPressed!();
-                        }
-                        _controller.animateTo(
-                            _controller.offset - widget.scrollSize,
-                            duration: widget.durationAnimation,
-                            curve: widget.curveAnimation);
-                      }
-                    : null,
-              )),
-        )
+        widget.iconPrevious != null
+            ? Visibility(
+                visible: _startScroll,
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: widget.iconPrevious!,
+                      onPressed: _startScroll
+                          ? () {
+                              double value =
+                                  _controller.offset - widget.scrollSize;
+                              if (value < widget.scrollSize) {
+                                value = _controller.position.minScrollExtent;
+                              }
+                              _controller.animateTo(value,
+                                  duration: widget.durationAnimation,
+                                  curve: widget.curveAnimation);
+                              if (widget.onPreviousPressed != null) {
+                                widget.onPreviousPressed!();
+                              }
+                            }
+                          : null,
+                    )),
+              )
+            : Container(),
+        widget.iconNext != null
+            ? Visibility(
+                visible: !_reachEnd,
+                child: Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      icon: widget.iconNext!,
+                      onPressed: _reachEnd
+                          ? null
+                          : () {
+                              double value =
+                                  _controller.offset + widget.scrollSize;
+                              if (value <=
+                                  _controller.position.maxScrollExtent) {
+                                var diff =
+                                    _controller.position.maxScrollExtent -
+                                        value;
+                                if (diff < value && diff < widget.scrollSize)
+                                  value += diff;
+                              } else {
+                                value = _controller.position.maxScrollExtent;
+                              }
+                              _controller.animateTo(value,
+                                  duration: widget.durationAnimation,
+                                  curve: widget.curveAnimation);
+                              if (widget.onNextPressed != null) {
+                                widget.onNextPressed!();
+                              }
+                            },
+                    )),
+              )
+            : Container(),
       ]),
     );
   }
