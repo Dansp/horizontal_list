@@ -1,5 +1,12 @@
 # horizontal_list
 
+[![pub](https://img.shields.io/pub/v/horizontal_list)](https://pub.dev/packages/horizontal_list)
+[![license](https://img.shields.io/badge/license-mit-green.svg)](https://github.com/Dansp/horizontal_list/blob/main/LICENSE)
+[![build](https://github.com/Dansp/horizontal_list/actions/workflows/build.yml/badge.svg)](https://github.com/Dansp/horizontal_list/actions/)
+[![codecov](https://codecov.io/gh/Dansp/horizontal_list/branch/main/graph/badge.svg?token=jYfO55O22s)](https://codecov.io/gh/Dansp/horizontal_list)
+[![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Dansp/horizontal_list)](https://www.codefactor.io/repository/github/Dansp/horizontal_list)
+[![Hits-of-Code](https://hitsofcode.com/github/Dansp/horizontal_list?branch=main)](https://hitsofcode.com/github/Dansp/horizontal_list/view?branch=main)
+
 A horizontal list widget with buttons next and previous. You can customize your card for example and insert it on HorizontalListView widget.
 
 
