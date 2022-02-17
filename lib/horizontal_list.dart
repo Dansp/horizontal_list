@@ -40,6 +40,11 @@ class HorizontalListView extends StatefulWidget {
   ///The size that scroll will go when click on button next or previous, the default is 300.
   final int scrollSize;
 
+  ///If true, enable manual scroll, if false disable manual scroll and can only be scrolled by [iconNext] and [iconPrevious].
+  ///
+  /// Default is true.
+  final bool enableManualScroll;
+
   const HorizontalListView({
     required this.height,
     required this.width,
@@ -51,6 +56,7 @@ class HorizontalListView extends StatefulWidget {
     this.durationAnimation = const Duration(milliseconds: 500),
     this.curveAnimation = Curves.ease,
     this.scrollSize = 300,
+    this.enableManualScroll = true,
     Key? key,
   }) : super(key: key);
 
@@ -125,7 +131,9 @@ class _HorizontalScrollState extends State<HorizontalListView> {
           left: widget.iconPrevious != null ? 50.0 : 0,
           right: widget.iconNext != null ? 50.0 : 0,
           child: ListView.builder(
-            // physics: const NeverScrollableScrollPhysics(),
+            physics: widget.enableManualScroll
+                ? const ClampingScrollPhysics()
+                : const NeverScrollableScrollPhysics(),
             scrollDirection: Axis.horizontal,
             controller: _controller,
             itemBuilder: (context, index) {
@@ -176,8 +184,9 @@ class _HorizontalScrollState extends State<HorizontalListView> {
                                 var diff =
                                     _controller.position.maxScrollExtent -
                                         value;
-                                if (diff < value && diff < widget.scrollSize)
+                                if (diff < value && diff < widget.scrollSize) {
                                   value += diff;
+                                }
                               } else {
                                 value = _controller.position.maxScrollExtent;
                               }
