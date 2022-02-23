@@ -48,6 +48,7 @@ HorizontalListView(
     iconPrevious: Icon(Icons.arrow_back_ios), // Icon for button previous
     curveAnimation: Curves.bounceIn, //Curve for animation
     durationAnimation: Duration(milliseconds: 300), //Duration of animation
+    enableManualScroll: true, //Enable manual scroll
     onNextPressed: () { //On button next pressed
       print('On next pressed');
     },

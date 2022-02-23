@@ -1,7 +1,6 @@
 library horizontal_list;
 
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -75,7 +74,6 @@ class _HorizontalScrollState extends State<HorizontalListView> {
       final maxScroll = _controller.position.maxScrollExtent;
       final minScroll = _controller.position.minScrollExtent;
       setState(() {
-        log('minScroll $minScroll, maxScroll $maxScroll, offset ${_controller.offset}');
         if (_controller.offset <= minScroll && maxScroll > 0) {
           _reachEnd = false;
         }
