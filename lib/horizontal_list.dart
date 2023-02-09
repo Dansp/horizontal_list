@@ -20,6 +20,10 @@ class HorizontalListView extends StatefulWidget {
   ///Icon to show in next button
   final Icon? iconNext;
 
+  ///On click listener when index changed;
+  ///NOTE: Only will work with `enableManualScroll` false.
+  final Function(int index)? onChanged;
+
   ///On click listener when next button was clicked.
   final VoidCallback? onNextPressed;
 
@@ -34,10 +38,15 @@ class HorizontalListView extends StatefulWidget {
   ///Curve to animation when click on button next or previous. Default is [Curves.ease]
   final Curve curveAnimation;
 
-  ///Size of scroll offset.
+  ///Item width.
   ///
-  ///The size that scroll will go when click on button next or previous, the default is 300.
-  final double scrollSize;
+  ///The width of item in list. Default is 300.
+  final double itemWidth;
+
+  ///Start from end of list
+  ///
+  ///Default is false;
+  final bool isStartedFromEnd;
 
   ///If true, enable manual scroll, if false disable manual scroll and can only be scrolled by [iconNext] and [iconPrevious].
   ///
@@ -48,14 +57,16 @@ class HorizontalListView extends StatefulWidget {
     required this.height,
     required this.width,
     required this.list,
+    this.itemWidth = 300,
     this.iconPrevious,
     this.iconNext,
+    this.onChanged,
     this.onNextPressed,
     this.onPreviousPressed,
     this.durationAnimation = const Duration(milliseconds: 500),
     this.curveAnimation = Curves.ease,
-    this.scrollSize = 300,
     this.enableManualScroll = true,
+    this.isStartedFromEnd = false,
     Key? key,
   }) : super(key: key);
 
@@ -65,7 +76,7 @@ class HorizontalListView extends StatefulWidget {
 
 class _HorizontalScrollState extends State<HorizontalListView> {
   final ScrollController _controller = ScrollController();
-
+  int _index = 0;
   var _reachEnd = true;
   var _startScroll = false;
 
@@ -89,6 +100,14 @@ class _HorizontalScrollState extends State<HorizontalListView> {
     super.initState();
     if (!_controller.hasClients) {
       _waitWhile(() => !_controller.hasClients).then((value) {
+        if (widget.isStartedFromEnd) {
+          _index = widget.list.length - 1;
+          _controller.jumpTo(_index * (widget.itemWidth - 100));
+
+          if (!widget.enableManualScroll) {
+            widget.onChanged?.call(_index);
+          }
+        }
         _listener();
       });
     }
@@ -134,69 +153,61 @@ class _HorizontalScrollState extends State<HorizontalListView> {
                 : const NeverScrollableScrollPhysics(),
             scrollDirection: Axis.horizontal,
             controller: _controller,
+            shrinkWrap: true,
             itemBuilder: (context, index) {
-              return widget.list[index];
+              return SizedBox(
+                  width: widget.itemWidth - 100, child: widget.list[index]);
             },
             itemCount: widget.list.length,
           ),
         ),
         widget.iconPrevious != null
-            ? Visibility(
-                visible: _startScroll,
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: widget.iconPrevious!,
-                      onPressed: _startScroll
-                          ? () {
-                              double value =
-                                  _controller.offset - widget.scrollSize;
-                              if (value < widget.scrollSize) {
-                                value = _controller.position.minScrollExtent;
-                              }
-                              _controller.animateTo(value,
-                                  duration: widget.durationAnimation,
-                                  curve: widget.curveAnimation);
-                              if (widget.onPreviousPressed != null) {
-                                widget.onPreviousPressed!();
-                              }
-                            }
-                          : null,
-                    )),
-              )
+            ? Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  icon: widget.iconPrevious!,
+                  onPressed: _startScroll
+                      ? () async {
+                          _index -= 1;
+                          if (_index < 0) {
+                            _index = 0;
+                          }
+
+                          await _controller.animateTo(
+                              _index * (widget.itemWidth - 100),
+                              duration: widget.durationAnimation,
+                              curve: widget.curveAnimation);
+                          if (!widget.enableManualScroll) {
+                            widget.onChanged?.call(_index);
+                          }
+                          widget.onPreviousPressed?.call();
+                        }
+                      : null,
+                ))
             : Container(),
         widget.iconNext != null
-            ? Visibility(
-                visible: !_reachEnd,
-                child: Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      icon: widget.iconNext!,
-                      onPressed: _reachEnd
-                          ? null
-                          : () {
-                              double value =
-                                  _controller.offset + widget.scrollSize;
-                              if (value <=
-                                  _controller.position.maxScrollExtent) {
-                                var diff =
-                                    _controller.position.maxScrollExtent -
-                                        value;
-                                if (diff < value && diff < widget.scrollSize) {
-                                  value += diff;
-                                }
-                              } else {
-                                value = _controller.position.maxScrollExtent;
-                              }
-                              _controller.animateTo(value,
-                                  duration: widget.durationAnimation,
-                                  curve: widget.curveAnimation);
-                              if (widget.onNextPressed != null) {
-                                widget.onNextPressed!();
-                              }
-                            },
-                    )),
-              )
+            ? Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: widget.iconNext!,
+                  onPressed: _reachEnd
+                      ? null
+                      : () async {
+                          _index += 1;
+                          if (_index > widget.list.length - 1) {
+                            _index = widget.list.length - 1;
+                          }
+                          await _controller.animateTo(
+                              _index * (widget.itemWidth - 100),
+                              duration: widget.durationAnimation,
+                              curve: widget.curveAnimation);
+
+                          if (!widget.enableManualScroll) {
+                            widget.onChanged?.call(_index);
+                          }
+                          widget.onNextPressed?.call();
+                        },
+                ))
             : Container(),
       ]),
     );

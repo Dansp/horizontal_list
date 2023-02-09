@@ -61,6 +61,11 @@ class _MyHomePageState extends State<MyHomePage> {
               list: _itemsComponent(),
               iconPrevious: const Icon(Icons.arrow_back_ios),
               iconNext: const Icon(Icons.arrow_forward_ios),
+              isStartedFromEnd: false,
+              itemWidth: 300,
+              onChanged: (index) {
+                print(index);
+              },
               onPreviousPressed: () {
                 //DO WHAT YOU WANT ON PREVIOUS PRESSED
                 log('onPreviousPressed');

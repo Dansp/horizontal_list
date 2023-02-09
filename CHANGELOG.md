@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Dart Package Versioning](https://dart.dev/tools/pub/versioning).
 
 
+## [0.0.7] - 2023-02-09
+
+### Added
+
+- onChanged listener with index added;
+- Make icons always visible if it has.
+
 ## [0.0.6] - 2023-02-09
 
 ### Added
