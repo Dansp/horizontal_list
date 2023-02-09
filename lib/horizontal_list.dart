@@ -37,7 +37,7 @@ class HorizontalListView extends StatefulWidget {
   ///Size of scroll offset.
   ///
   ///The size that scroll will go when click on button next or previous, the default is 300.
-  final int scrollSize;
+  final double scrollSize;
 
   ///If true, enable manual scroll, if false disable manual scroll and can only be scrolled by [iconNext] and [iconPrevious].
   ///
